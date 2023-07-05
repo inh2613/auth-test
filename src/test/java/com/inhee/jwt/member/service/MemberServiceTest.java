@@ -54,7 +54,6 @@ class MemberServiceTest {
 		// Then
 		verify(memberRepository, times(1)).save(any(Member.class));
 
-
 	}
 
 	@Test

@@ -15,19 +15,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-//	private MemberService memberService;
-
-//	@Autowired
-//	public SecurityConfiguration(MemberService memberService) {
-//		this.memberService = memberService;
-//	}
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
 		httpSecurity.csrf(csrf->csrf.disable())
 				.authorizeHttpRequests(authorizeHttpRequests ->
-						authorizeHttpRequests.requestMatchers("/signup").permitAll()
+						authorizeHttpRequests.requestMatchers("/signup","/login").permitAll()
 								.anyRequest().authenticated());
+
 		return httpSecurity.build();
 	}
 

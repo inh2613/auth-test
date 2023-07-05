@@ -19,4 +19,6 @@ public class MemberDTO {
 	public String getPassword() {
 		return password;
 	}
+	public MemberDTO() {
+	}
 }

@@ -38,8 +38,8 @@ public class MemberController {
 	}
 
 	@GetMapping("/admin/get")
-	public ResponseEntity<SignResponse> getUserForAdmin(@RequestParam String account) throws Exception {
-		return new ResponseEntity<>( memberService.getMember(account), HttpStatus.OK);
+	public ResponseEntity<SignResponse> getUserForAdmin(@RequestParam String username) throws Exception {
+		return new ResponseEntity<>( memberService.getMember(username), HttpStatus.OK);
 	}
 }
 

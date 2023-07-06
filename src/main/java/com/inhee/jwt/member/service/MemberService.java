@@ -1,8 +1,13 @@
 package com.inhee.jwt.member.service;
 
 import com.inhee.jwt.member.domain.dto.MemberDTO;
+import com.inhee.jwt.member.domain.dto.SignRequest;
+import com.inhee.jwt.member.domain.dto.SignResponse;
 import com.inhee.jwt.member.domain.entity.Member;
+import com.inhee.jwt.member.domain.entity.Role;
 import com.inhee.jwt.member.repository.MemberRepository;
+import com.inhee.jwt.security.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,41 +20,43 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
-public class MemberService implements UserDetailsService {
+@RequiredArgsConstructor
+public class MemberService{
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final TokenProvider tokenProvider;
 
-	@Autowired
-	public MemberService(MemberRepository memberRepository,PasswordEncoder passwordEncoder) {
-		this.memberRepository = memberRepository;
-		this.passwordEncoder = passwordEncoder;
-	}
-
-	public void signUp(MemberDTO memberDTO) {
+	public void signUp(SignRequest signRequest) {
 		Member member = Member.builder()
-				.username(memberDTO.getUsername())
-				.password(passwordEncoder.encode(memberDTO.getPassword()))
+				.username(signRequest.getUsername())
+				.password(passwordEncoder.encode(signRequest.getPassword()))
+				.role(Role.ROLE_USER.value())
 				.build();
 		memberRepository.save(member);
 	}
 
-	public MemberDTO login(MemberDTO memberDTO) {
-		Member member = memberRepository.findByUsername(memberDTO.getUsername());
-		if (member != null && passwordEncoder.matches(memberDTO.getPassword(), member.getPassword())) {
-			return MemberDTO.builder()
+	public SignResponse login(SignRequest signRequest){
+		Member member = memberRepository.findByUsername(signRequest.getUsername());
+		String token = tokenProvider.createToken(member.getUsername(), member.getRole());
+		System.out.println("token = " + token);
+		if (member != null && passwordEncoder.matches(signRequest.getPassword(), member.getPassword())) {
+			return SignResponse.builder()
 					.username(member.getUsername())
+					.password(member.getPassword())
+					.token(token)
+					.role(member.getRole().toString())
 					.build();
 		}
 		return null;
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public SignResponse getMember(String username) throws Exception{
 		Member member = memberRepository.findByUsername(username);
-		if (member == null) {
-			throw new UsernameNotFoundException("User not found");
+		if(member!=null){
+			return new SignResponse(member);
+		}else{
+			throw new Exception("User not found with username: " + username);
 		}
-		return new User(member.getUsername(), member.getPassword(), new ArrayList<>());
 	}
 }

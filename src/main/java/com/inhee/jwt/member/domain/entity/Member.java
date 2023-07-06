@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,11 +21,15 @@ public class Member {
 	@Column(nullable = false,name = "password")
 	private String password;
 
+	@Column(nullable = false,name = "role")
+	private String role;
+
 	@Builder
-	public Member(Long id, String username, String password) {
+	public Member(Long id, String username, String password, String role) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+		this.role = role;
 	}
 
 	public Long getId() {
@@ -37,4 +43,11 @@ public class Member {
 	public String getPassword() {
 		return password;
 	}
+	public String getRole() {
+		return role;
+	}
+	public GrantedAuthority toAuthority() {
+		return new SimpleGrantedAuthority(role);
+	}
+
 }

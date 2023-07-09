@@ -10,8 +10,8 @@ import lombok.*;
 public class SignResponse {
     private String username;
     private String password;
-    private String token;
     private String role;
+    private TokenDto tokenDto;
 
     public SignResponse(Member member) {
         this.username = member.getUsername();

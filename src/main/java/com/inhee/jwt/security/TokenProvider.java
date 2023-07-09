@@ -45,12 +45,13 @@ public class TokenProvider {
 		return Jwts.builder()
 				.setClaims(claims)
 				.signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
-//				.setSubject(username)  // JWT 토큰 제목
 				.setIssuer(issuer)  // JWT 토큰 발급자
 				.setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))    // JWT 토큰 발급 시간
 				.setExpiration(Date.from(Instant.now().plus(expirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
 				.compact(); // JWT 토큰 생성
 	}
+
+
 	public Authentication getAuthentication(String token) {
 		UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
@@ -83,4 +84,5 @@ public class TokenProvider {
 			return false;
 		}
 	}
+
 }

@@ -24,6 +24,7 @@ public class Member {
 	@Column(nullable = false,name = "role")
 	private String role;
 
+
 	@Builder
 	public Member(Long id, String username, String password, String role) {
 		this.id = id;
